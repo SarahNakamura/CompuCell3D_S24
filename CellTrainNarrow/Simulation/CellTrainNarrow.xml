@@ -1,0 +1,156 @@
+<CompuCell3D Revision="2" Version="4.5.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="256" y="100" z="1"/>
+      <Steps>100000</Steps>
+      <Temperature>10.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="B"/>
+      <CellType TypeId="2" TypeName="N"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"></Plugin>
+   
+   <Plugin Name="Surface"></Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">100.0</Energy>
+      <Energy Type1="Medium" Type2="B">80.0</Energy>
+      <Energy Type1="Medium" Type2="N">120.0</Energy>
+      <Energy Type1="B" Type2="B">30.0</Energy>
+      <Energy Type1="B" Type2="N">30.0</Energy>
+      <Energy Type1="N" Type2="N">50.0</Energy>
+      <NeighborOrder>4</NeighborOrder>
+   </Plugin>
+   
+   <Plugin Name="ContactInternal">
+      <!-- Specification of internal adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">100.0</Energy>
+      <Energy Type1="Medium" Type2="B">80.0</Energy>
+      <Energy Type1="Medium" Type2="N">120.0</Energy>
+      <Energy Type1="B" Type2="B">30.0</Energy>
+      <Energy Type1="B" Type2="N">5.0</Energy>
+      <Energy Type1="N" Type2="N">50.0</Energy>
+      <NeighborOrder>4</NeighborOrder>
+   </Plugin>
+
+   <Plugin Name="FocalPointPlasticity">
+   
+   <!-- Specification of focal point junctions -->
+   <!-- We separetely specify links between members of same cluster - InternalParameters and members of different clusters Parameters. When not using compartmental  cells comment out InternalParameters specification -->
+   <!-- To modify FPP links individually for each cell pair uncomment line below -->
+   <!-- <Local/> -->
+   <!-- Note that even though you may manipulate lambdaDistance, targetDistance and maxDistance using Python you still need to set activation energy from XML level -->
+   <!-- See CC3D manual for details on FPP plugin  -->
+   
+   
+   <InternalParameters Type1="B" Type2="N">
+      <Lambda>10</Lambda>
+      <ActivationEnergy>-50</ActivationEnergy>
+      <TargetDistance>0</TargetDistance>
+      <MaxDistance>5</MaxDistance>
+      <MaxNumberOfJunctions NeighborOrder="1">1</MaxNumberOfJunctions>
+   </InternalParameters>
+
+   
+   <NeighborOrder>1</NeighborOrder>
+   </Plugin>
+
+   <Plugin Name="Chemotaxis">
+   <!-- You may repeat ChemicalField element for each chemical field declared in the PDE solvers -->
+   <!-- Specification of chemotaxis properties of select cell types. -->
+   <ChemicalField Source="DiffusionSolverFE" Name="ATTR">
+   <ChemotaxisByType Lambda="1000.0" Type="B"/>
+  </ChemicalField>
+   </Plugin>
+   
+  
+   
+   <Steppable Type="DiffusionSolverFE">
+      
+      <!-- Specification of PDE solvers -->
+      <DiffusionField Name="ATTR">
+         <DiffusionData>
+            <FieldName>ATTR</FieldName>
+            <GlobalDiffusionConstant>3.0</GlobalDiffusionConstant>
+            <GlobalDecayConstant>1e-06</GlobalDecayConstant>
+            <!-- Additional options are: -->
+            <!-- <InitialConcentrationExpression>x*y</InitialConcentrationExpression> -->
+            <!-- <ConcentrationFileName>INITIAL CONCENTRATION FIELD - typically a file with path Simulation/NAME_OF_THE_FILE.txt</ConcentrationFileName> -->
+            <DiffusionCoefficient CellType="B">0.1</DiffusionCoefficient>
+            <DiffusionCoefficient CellType="N">0.1</DiffusionCoefficient>
+            <DecayCoefficient CellType="B">0.0001</DecayCoefficient>
+            <DecayCoefficient CellType="N">0.0001</DecayCoefficient>
+         </DiffusionData>
+         <SecretionData>
+            <!-- When secretion is defined inside DissufionSolverFE all secretion constants are scaled automaticaly to account for the extra calls to the diffusion step when handling large diffusion constants -->
+            
+            <!-- Uniform secretion Definition -->
+            <Secretion Type="B">0</Secretion>
+            <Secretion Type="N">0</Secretion>
+            <!-- <SecretionOnContact SecreteOnContactWith="B,N" Type="N">0.2</SecretionOnContact> -->
+            <!-- <ConstantConcentration Type="N">0.1</ConstantConcentration> -->
+         </SecretionData>
+         <BoundaryConditions>
+            <Plane Axis="X">
+               <!-- <ConstantDerivative PlanePosition="Min" Value="0"/> -->
+               <!-- <ConstantDerivative PlanePosition="Max" Value="1.0"/> -->
+               <!-- Other options are (examples): -->
+               <!-- <Periodic/> -->
+               <ConstantValue PlanePosition="Min" Value="0"/>
+               <ConstantValue PlanePosition="Max" Value="1000.0"/>
+   
+            </Plane>
+            <Plane Axis="Y">
+               <!-- <ConstantDerivative PlanePosition="Min" Value="0.0"/> -->
+               <!-- <ConstantDerivative PlanePosition="Max" Value="0.0"/> -->
+               <!-- Other options are (examples): -->
+               <!-- <Periodic/> -->
+               <ConstantValue PlanePosition="Min" Value="0"/>
+               <ConstantValue PlanePosition="Max" Value="0"/>
+            </Plane>
+         </BoundaryConditions>
+      </DiffusionField>
+   </Steppable>
+   
+   <!-- <Steppable Type="UniformInitializer"> -->
+      
+      <!-- &lt;!&ndash; Initial layout of cells in the form of rectangular slab &ndash;&gt;  -->
+
+
+      <!-- <Region> -->
+         <!-- <BoxMin x="51" y="16" z="0"/> -->
+         <!-- <BoxMax x="204" y="64" z="1"/> -->
+         <!-- <Gap>0</Gap> -->
+         <!-- <Width>7</Width> -->
+         <!-- <Types>B,N</Types> -->
+      <!-- </Region> -->
+   <!-- </Steppable> -->
+</CompuCell3D>
