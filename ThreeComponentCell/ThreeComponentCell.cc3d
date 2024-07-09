@@ -1,0 +1,5 @@
+<Simulation version="4.5.0">
+   <XMLScript Type="XMLScript">Simulation/ThreeComponentCell.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/ThreeComponentCell.py</PythonScript>
+   <Resource Type="Python">Simulation/ThreeComponentCellSteppables.py</Resource>
+</Simulation>
