@@ -1,0 +1,5 @@
+<Simulation version="4.5.0">
+   <XMLScript Type="XMLScript">Simulation/Cell_position.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/Cell_position.py</PythonScript>
+   <Resource Type="Python">Simulation/Cell_positionSteppables.py</Resource>
+</Simulation>
