@@ -1,0 +1,5 @@
+<Simulation version="4.5.0">
+   <XMLScript Type="XMLScript">Simulation/SingleCellDivision.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/SingleCellDivision.py</PythonScript>
+   <Resource Type="Python">Simulation/SingleCellDivisionSteppables.py</Resource>
+</Simulation>
