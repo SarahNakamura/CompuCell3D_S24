@@ -80,6 +80,8 @@ class BorderCells_AF_1Steppable(SteppableBasePy):
         beta_BC = 0.01
         beta_NC = 0.001
         gamma = 0.01
+        gamma_BC = 0.01
+        gamma_NC = 0.01
         molden_PCi = 0
         molden_PCj = 0
         molden_BCi = 0
@@ -129,7 +131,7 @@ class BorderCells_AF_1Steppable(SteppableBasePy):
                     total_ECad_adhesion_ij += ECad_adhesion_ij
                     print(f'BC_total_ECad_adhesion_ij:{total_ECad_adhesion_ij}')
                     print(f'BC_celli_surface: {celli_surface}')
-                molden_new = molden_BCi + alpha_BC - gamma*molden_BCi - beta_BC*molden_BCi/celli_surface*total_ECad_adhesion_ij
+                molden_new = molden_BCi + alpha_BC - gamma_BC*molden_BCi - beta_BC*molden_BCi/celli_surface*total_ECad_adhesion_ij
                 molden_BCi = self.adhesionFlexPlugin.setAdhesionMoleculeDensity(cell,"ECad",molden_new)
                 print(f'BC_cell_id:{cell.id},molden_new: {molden_new}')
 
@@ -151,7 +153,7 @@ class BorderCells_AF_1Steppable(SteppableBasePy):
                     total_ECad_adhesion_ij += ECad_adhesion_ij
                     print(f'BC_total_ECad_adhesion_ij:{total_ECad_adhesion_ij}')
                     print(f'BC_celli_surface: {celli_surface}')
-                molden_new = molden_NCi + alpha_NC - gamma*molden_NCi - beta_NC*molden_NCi/celli_surface*total_ECad_adhesion_ij
+                molden_new = molden_NCi + alpha_NC - gamma_NC*molden_NCi - beta_NC*molden_NCi/celli_surface*total_ECad_adhesion_ij
                 molden_NCi = self.adhesionFlexPlugin.setAdhesionMoleculeDensity(cell,"ECad",molden_new)
                 print(f'NC_cell_id:{cell.id},molden_new: {molden_new}')
       
