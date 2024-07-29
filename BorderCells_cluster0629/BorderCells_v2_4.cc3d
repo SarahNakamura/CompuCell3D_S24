@@ -1,0 +1,5 @@
+<Simulation version="4.5.0">
+   <XMLScript Type="XMLScript">Simulation/BorderCells_v2.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/BorderCells_v2.py</PythonScript>
+   <Resource Type="Python">Simulation/BorderCells_v2Steppables.py</Resource>
+</Simulation>

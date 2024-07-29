@@ -1,0 +1,117 @@
+<CompuCell3D Revision="2" Version="4.5.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="1000" y="300" z="1"/>
+      <Steps>100000</Steps>
+      <Temperature>100.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+   
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="NC"/>
+      <CellType TypeId="2" TypeName="BC"/>
+      <CellType TypeId="3" TypeName="PC"/>
+   </Plugin>
+   
+   <Plugin Name="Volume"></Plugin>
+   
+   <Plugin Name="Surface"></Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+     
+   
+   <Steppable Type="FlexibleDiffusionSolverFE">
+   
+   <!-- Specification of PDE solvers -->
+   <DiffusionField Name="ATTR">
+      <DiffusionData>
+         <FieldName>ATTR</FieldName>
+         <DiffusionConstant>0.0</DiffusionConstant>
+         <DecayConstant>0</DecayConstant>
+         <!-- Additional options are: -->
+         <!-- <DoNotDiffuseTo>LIST YOUR CELL TYPES HERE</DoNotDiffuseTo> -->
+         <!-- <DoNotDecayIn>LIST YOUR CELL TYPES HERE</DoNotDecayIn> -->
+         <InitialConcentrationExpression>x</InitialConcentrationExpression>
+         <!-- <ConcentrationFileName>INITIAL CONCENTRATION FIELD - typically a file with path Simulation/NAME_OF_THE_FILE.txt</ConcentrationFileName> -->
+         <!-- To run solver for large diffusion constants you typically call solver multiple times - ExtraTimesPerMCS to specify additional calls to the solver in each MCS  -->
+         <!-- IMPORTANT: make sure not to mix this setting with the PDESolverCaller module! See manual for more information -->
+         <!-- <ExtraTimesPerMCS>0</ExtraTimesPerMCS> -->
+         <!-- <DeltaX>1.0</DeltaX> -->
+         <!-- <DeltaT>1.0</DeltaT> -->
+      </DiffusionData>
+      <BoundaryConditions>
+         <Plane Axis="X">
+            <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+            <ConstantValue PlanePosition="Max" Value="10.0"/>
+            <!-- Other options are (examples): -->
+            <!-- <Periodic/> -->
+            <!-- <ConstantDerivative PlanePosition="Min" Value="10.0"/> -->
+         </Plane>
+         <Plane Axis="Y">
+            <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+            <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            <!-- Other options are (examples): -->
+            <!-- <Periodic/> -->
+            <!-- <ConstantValue PlanePosition="Min" Value="10.0"/> -->
+         </Plane>
+      </BoundaryConditions>
+   </DiffusionField>
+</Steppable>
+
+<Plugin Name="AdhesionFlex">
+   <AdhesionMolecule Molecule="ECad"/>
+   <AdhesionMoleculeDensity CellType="Medium" Density="0" Molecule="ECad"/>
+   <!-- The ECad density of NC should be significantly lower because otherwise, they will try to increase the surface area to increase the adhesion energy --> 
+
+
+   <AdhesionMoleculeDensity CellType="NC" Density="0.001" Molecule="ECad"/>  
+   <AdhesionMoleculeDensity CellType="BC" Density="4.0" Molecule="ECad"/>
+   <AdhesionMoleculeDensity CellType="PC" Density="8.0" Molecule="ECad"/>
+   <BindingFormula Name="Binary">
+      <Formula>min(Molecule1,Molecule2)</Formula>
+      <Variables>
+         <AdhesionInteractionMatrix>
+            <BindingParameter Molecule1="ECad" Molecule2="ECad">3.0</BindingParameter>
+         </AdhesionInteractionMatrix>
+      </Variables>
+   </BindingFormula>
+   <NeighborOrder>4</NeighborOrder>
+</Plugin>
+
+
+<Plugin Name="Chemotaxis">
+<ChemicalField Source="FlexibleDiffusionSolverFE" Name="ATTR">
+<!-- <ChemotaxisByType Lambda="0" Type="BC"/> -->
+<!-- <ChemotaxisByType Lambda="0" Type="PC"/> -->
+</ChemicalField>
+</Plugin>
+
+<FluctuationAmplitude>
+    <!-- <FluctuationAmplitudeParameters CellType="PC" FluctuationAmplitude="50"/> -->
+    <!-- <FluctuationAmplitudeParameters CellType="BC" FluctuationAmplitude="1000"/> --> 
+
+
+</FluctuationAmplitude>
+
+</CompuCell3D>
